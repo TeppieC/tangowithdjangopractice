@@ -31,7 +31,8 @@ def index(request):
 
 #about view page
 def about(request):
-	return HttpResponse('Rango says it is the about page! <a href="/rango/">Index</a>')
+	return render(request, 'rango/about.html', {})
+	#return HttpResponse('Rango says it is the about page! <a href="/rango/">Index</a>')
 
 #category view page
 def category(request, category_name_slug):
@@ -191,7 +192,8 @@ def user_login(request):
 
 @login_required
 def restricted(request): # a simulated page to illustrate the example on accessing restricting
-    return HttpResponse("Since you're logged in, you can see this text!")
+	return render(request, 'rango/restricted.html', {})
+    #return HttpResponse("Since you're logged in, you can see this text!")
 
 # Use the login_required() decorator to ensure only those logged in can access the view.
 @login_required
