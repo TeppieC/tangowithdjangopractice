@@ -33,22 +33,4 @@
             <strong>There are no pages present.</strong>
        {% endif %}
 
-        
-
-	<!--To link to a certain url (A url for a certain view, not a template name), 前缀（因为在同一目录下）省略-->
-    <!--
-    	<ul>
-    	{% if user.is_authenticated %}
-        	<li><a href="{% url 'restricted' %}">Restricted Page</a></li>
-        	<li><a href="{% url 'logout' %}">Logout</a></li>
-        	<li><a href="{% url 'add_category' %}">Add a New Category</a></li>
-    	{% else %}
-        	<li><a href="{% url 'register' %}">Register Here</a></li>
-        	<li><a href="{% url 'login' %}">Login</a></li>
-    	{% endif %}
-
-    	<li><a href="{% url 'about' %}">About</a></li>
-    	</ul>
-    	-->
-
 {% endblock %}
