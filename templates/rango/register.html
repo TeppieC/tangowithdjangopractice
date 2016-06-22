@@ -5,6 +5,8 @@
 
 <!--注意不要写成尖括号 否则就没了-->
 {% block body_block %}
+
+    <div class="page-header">
     <h1>Register with Rango</h1>
 
     {% if registered %}
@@ -28,4 +30,5 @@
             <input type="submit" name="submit" value="Register" />
         </form>
     {% endif %}
+    </div>
 {% endblock %}

@@ -2,6 +2,8 @@
 
 
 {% block body_block %}
+
+    <div class="page-header">
 <h1>Register Here</h1>
         <form method="post" action=".">
                 {% csrf_token %}
@@ -9,4 +11,5 @@
 
                 <input type="submit" value="Submit" />
         </form>
+    </div>
 {% endblock %}
