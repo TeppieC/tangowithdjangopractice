@@ -9,6 +9,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from datetime import datetime
+from rango.bing_search import run_query
 
 # INMPORTANT NOTE: A function defined is a page/view to show
 # It will interact with the corresponding models to gather the data
@@ -126,6 +127,19 @@ def add_category(request):
 	return render(request, 'rango/add_category.html', {'form': form})
 
 from rango.forms import UserForm, UserProfileForm
+
+def search(request):
+
+    result_list = []
+
+    if request.method == 'POST':
+        query = request.POST['query'].strip()
+
+        if query:
+            # Run our Bing function to get the results list!
+            result_list = run_query(query)
+
+    return render(request, 'rango/search.html', {'result_list': result_list})
 
 @login_required
 def restricted(request): # a simulated page to illustrate the example on accessing restricting
