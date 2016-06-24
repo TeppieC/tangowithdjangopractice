@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from datetime import datetime
 from rango.bing_search import run_query
+from django.shortcuts import redirect
 
 # INMPORTANT NOTE: A function defined is a page/view to show
 # It will interact with the corresponding models to gather the data
@@ -62,9 +63,9 @@ def about(request):
 	# If the visits session varible exists, take it and use it.
 	# If it doesn't, we haven't visited the site so set the count to zero.
 	if request.session.get('visits'):
-	    count = request.session.get('visits')
+		count = request.session.get('visits')
 	else:
-	    count = 0
+		count = 0
 
 	# remember to include the visit data
 	return render(request, 'rango/about.html', {'visits': count})
@@ -72,34 +73,32 @@ def about(request):
 
 #category view page
 def category(request, category_name_slug):
-
-	# Create a context dictionary which we can pass to the template rendering engine.
 	context_dict = {}
+	context_dict['result_list'] = None
+	context_dict['query'] = None
+	if request.method == 'POST':
+		query = request.POST['query'].strip()
+
+		if query:
+			# Run our Bing function to get the results list!
+			result_list = run_query(query)
+
+			context_dict['result_list'] = result_list
+			context_dict['query'] = query
 
 	try:
-		# Can we find a category name slug with the given name?
-		# If we can't, the .get() method raises a DoesNotExist exception.
-		# So the .get() method returns one model instance or raises an exception.
 		category = Category.objects.get(slug=category_name_slug)
 		context_dict['category_name'] = category.name
-
-		# Retrieve all of the associated pages.
-		# Note that filter returns >= 1 model instance.
-		pages = Page.objects.filter(category=category)
-
-		# Adds our results list to the template context under name pages.
+		pages = Page.objects.filter(category=category).order_by('-views')
 		context_dict['pages'] = pages
-		# We also add the category object from the database to the context dictionary.
-		# We'll use this in the template to verify that the category exists.
 		context_dict['category'] = category
 	except Category.DoesNotExist:
-		# We get here if we didn't find the specified category.
-		# Don't do anything - the template displays the "no category" message for us.
 		pass
 
-	# Go render the response and return it to the client.
+	if not context_dict['query']:
+		context_dict['query'] = category.name
+
 	return render(request, 'rango/category.html', context_dict)
-	from rango.forms import CategoryForm
 
 # the page for the forms to add new categories
 def add_category(request):
@@ -130,16 +129,36 @@ from rango.forms import UserForm, UserProfileForm
 
 def search(request):
 
-    result_list = []
+	result_list = []
 
-    if request.method == 'POST':
-        query = request.POST['query'].strip()
+	if request.method == 'POST':
+		query = request.POST['query'].strip()
 
-        if query:
-            # Run our Bing function to get the results list!
-            result_list = run_query(query)
+		if query:
+			# Run our Bing function to get the results list!
+			result_list = run_query(query)
 
-    return render(request, 'rango/search.html', {'result_list': result_list})
+	return render(request, 'rango/search.html', {'result_list': result_list})
+
+def track_url(request):
+	# Examine the HTTP GET request parameters and pull out the page_id. 
+	# The HTTP GET requests will look something like /rango/goto/?page_id=1.
+	page_id = None
+	url = '/rango/' # to redirect
+	if request.method == 'GET':
+		if 'page_id' in request.GET:
+			page_id = request.GET['page_id']
+			try:
+				page = Page.objects.get(id=page_id)
+				page.views +=1
+				page.save()
+				url = page.url # to redirect to the page url
+			except:
+				pass
+
+	return redirect(url) # imported from django.shortcuts
+
+
 
 @login_required
 def restricted(request): # a simulated page to illustrate the example on accessing restricting
