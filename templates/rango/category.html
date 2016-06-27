@@ -12,20 +12,29 @@
         {% if pages %}
         <ul>
             {% for page in pages %}
-            <li>
-            <a href="{% url 'goto' %}?page_id={{page.id}}">{{ page.title }}</a>
-            {% if page.views > 1 %}
-                ({{ page.views }} views)
-            {% elif page.views == 1 %}
-                ({{ page.views }} view)
-            {% endif %}
-            </li>
-{% endfor %}
+                <li>
+                <a href="{% url 'goto' %}?page_id={{page.id}}">{{ page.title }}</a>
+                {% if page.views > 1 %}
+                    ({{ page.views }} views)
+                {% elif page.views == 1 %}
+                    ({{ page.views }} view)
+                {% endif %}
+                </li>
+            {% endfor %}
         {% else %}
                 <strong>No pages currently in category.</strong>
                 {% endif %}
 
+        <strong id="like_count">{{ category.likes }}</strong> people like this category
 
+        <p>
+        {% if user.is_authenticated %}
+                <button id="likes" data-catid="{{category.id}}" class="btn btn-primary" type="button">
+                <span class="glyphicon glyphicon-thumbs-up"></span>
+                Like
+                </button>
+        {% endif %}
+        </p>
         {% if user.is_authenticated %}
         <form class="form-inline" id="user_form" method="post" action="{% url 'category' category.slug %}">
                 {% csrf_token %}
