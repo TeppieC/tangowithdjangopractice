@@ -11,6 +11,7 @@ from django.contrib.auth import logout
 from datetime import datetime
 from rango.bing_search import run_query
 from django.shortcuts import redirect
+from django.contrib.auth.decorators import login_required
 
 # INMPORTANT NOTE: A function defined is a page/view to show
 # It will interact with the corresponding models to gather the data
@@ -183,7 +184,6 @@ def suggest_category(request):
 @login_required
 def like_category(request):
 
-    context = RequestContext(request)
     cat_id = None  # initialize
     if request.method == 'GET':
         cat_id = request.GET['category_id'] # GET the id of the category which the user likes
